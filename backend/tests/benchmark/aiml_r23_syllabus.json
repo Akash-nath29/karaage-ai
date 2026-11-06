@@ -1,0 +1,33 @@
+{
+  "document": "test_material/AIML-R23.pdf",
+  "review_status": "Drafted by Claude on 2026-11-06 from the PDF text; needs a human pass (PRD §16).",
+  "courses": [
+    {
+      "title": "Programming for Problem Solving", "code": "AM101", "start_page": 10, "last_content_page": 12,
+      "units": ["Fundamentals of Computer", "Introduction to C Programming", "Branch and Loop", "Program Structures",
+                "Array and Pointer", "Structures, Unions and Enum", "File in C"],
+      "hours": [9, 5, 5, 4, 7, 3, 3],
+      "note": "theory course; a 'Programming for Problem Solving Lab' (AM191) also exists"
+    },
+    {
+      "title": "Data Structures", "code": "AM201", "start_page": 33, "last_content_page": 34,
+      "units": ["Introduction", "Non-Restricted Linear Data Structure", "Restricted Linear Data Structure",
+                "Nonlinear Data structures", "Sorting and Searching"],
+      "hours": null,
+      "note": "a 'Data Structures Lab' (AM291) also exists"
+    },
+    {
+      "title": "Operating System", "code": "AM401", "start_page": 75, "last_content_page": 76,
+      "units": null, "unit_count": 5, "hours": [3, 11, 11, 6, 5],
+      "note": "modules are untitled ('Module – 1: [3L] …'): titles must be inferred"
+    },
+    {
+      "title": "Machine Learning", "code": "AM601", "start_page": 131, "last_content_page": 132,
+      "units": ["Introduction to Machine Learning", "Classification and Regression",
+                "Clustering, Association and Outlier Analysis", "Mining Frequent Patterns, Associations and Data Streams",
+                "Advanced Concepts"],
+      "hours": [4, 14, 10, 3, 5],
+      "note": "a 'Machine Learning Lab' (AM691, p152) also exists"
+    }
+  ]
+}

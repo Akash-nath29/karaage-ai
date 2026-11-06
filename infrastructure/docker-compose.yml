@@ -1,0 +1,71 @@
+name: semsaviour
+
+# Development stack. All ports bound to 127.0.0.1.
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    environment:
+      POSTGRES_USER: semsaviour
+      POSTGRES_PASSWORD: semsaviour
+      POSTGRES_DB: semsaviour
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U semsaviour"]
+      interval: 2s
+      retries: 30
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "127.0.0.1:6380:6379" # 6379 is often taken by a WSL/local Redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 2s
+      retries: 30
+
+  minio:
+    # minio/minio is no longer published on Docker Hub (docs/decisions.md R14); Chainguard maintains a build.
+    image: cgr.dev/chainguard/minio:latest
+    command: server /data --console-address :9001
+    environment:
+      MINIO_ROOT_USER: semsaviour
+      MINIO_ROOT_PASSWORD: semsaviour-secret
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - miniodata:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 2s
+      retries: 30
+
+  # Catches outgoing email in development (A19): SMTP on 1025, inbox at http://127.0.0.1:8025
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+
+  # Background jobs (document ingestion). Code is mounted: `docker compose restart worker` after edits.
+  worker:
+    build: ../backend
+    command: celery -A app.workers.celery_app worker --loglevel=INFO --concurrency=2
+    env_file: ../.env
+    environment:
+      DATABASE_URL: postgresql+psycopg://semsaviour:semsaviour@db:5432/semsaviour
+      REDIS_URL: redis://redis:6379/0
+      S3_ENDPOINT_URL: http://minio:9000
+    volumes:
+      - ../backend:/app
+    depends_on:
+      db: { condition: service_healthy }
+      redis: { condition: service_healthy }
+      minio: { condition: service_healthy }
+
+volumes:
+  pgdata:
+  miniodata:

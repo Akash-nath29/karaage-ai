@@ -1,0 +1,8 @@
+{
+  "name": "semsaviour-backend-tools",
+  "private": true,
+  "description": "Node helpers the Python backend shells out to. Keep KaTeX on the same minor version as frontend/.",
+  "dependencies": {
+    "katex": "~0.19.1"
+  }
+}
