@@ -2,7 +2,7 @@
 
 Turns your syllabus, textbooks and notes into structured lessons, a tutor and practice quizzes. Spec: `PRD.md`. Progress: `CHECKLIST.md`. Decisions and deviations: `docs/decisions.md`.
 
-> **Multi-user, local development.** Accounts, workspace roles and invitations work; deployment (domain, HTTPS, Sentry) isn't set up yet (decisions D33, Q6). Keep it on localhost until then.
+> **Multi-user.** Accounts, workspace roles and invitations work. Run it locally (below) or deploy it (see [Deploy](#deploy)).
 
 ## Prerequisites
 
@@ -78,3 +78,32 @@ cd backend
 ../.venv/Scripts/python -m alembic revision --autogenerate -m "describe change"
 ../.venv/Scripts/python -m alembic upgrade head
 ```
+
+## Deploy
+
+Vercel serves the frontend and the API from one origin, so sign-in cookies stay first-party and no domain is needed. Render runs the worker and Redis, Neon runs Postgres, and Supabase Storage holds files (through its S3 API). Everything is in Singapore. Reasons: `docs/decisions.md` Q6, D37. **Uploads are capped at 4 MB in production** (Vercel rejects request bodies over 4.5 MB).
+
+1. **Neon:** create a project (Postgres 17, region AWS Singapore). Copy two connection strings: the **pooled** one (its host contains `-pooler`) for Vercel, and the **direct** one for Render.
+2. **Supabase Storage:** create a project (region Singapore) and a **private** bucket. Under Storage → S3, copy the endpoint and region, then create an access key. These keys bypass Storage RLS, so they go only into Vercel and Render, never into the frontend. Cloudflare R2 works with the same variables (region `auto`).
+3. **Render:** New → Blueprint → this repo (`render.yaml`). Fill in the values it asks for, with `DATABASE_URL` set to Neon's *direct* string. Every deploy runs `alembic upgrade head` before the worker starts. Then open `karaage-redis` and copy its **External** URL.
+4. **Vercel:** Add New → Project → this repo. Keep the root directory at the repo root; `vercel.json` handles the rest. Set the variables below, then deploy.
+5. **Check:** `https://<project>.vercel.app/api/v1/health` returns `{"status":"ok"}`. Then sign up, confirm the email, and upload a small PDF to see the worker pick it up.
+
+Vercel environment variables. Anything else in `.env.example` already has a production-ready default.
+
+| Variable | Value |
+|---|---|
+| `DATABASE_URL` | Neon's pooled connection string (`postgresql://…` works as-is) |
+| `REDIS_URL` | Render Key Value's external URL with `?ssl_cert_reqs=required` appended |
+| `SECRET_KEY` | `python -c "import secrets; print(secrets.token_hex(32))"` |
+| `COOKIE_SECURE` | `true` |
+| `APP_URL` | `https://<project>.vercel.app` (links in emails) |
+| `MAX_UPLOAD_MB` | `4` |
+| `GEMINI_API_KEY`, `TAVILY_API_KEY` | your keys (a paid Gemini key before real users, decision Q1) |
+| `S3_ENDPOINT_URL` | `https://<project-ref>.storage.supabase.co/storage/v1/s3` |
+| `S3_REGION` | the region shown under Storage → S3 (e.g. `ap-southeast-1`) |
+| `S3_BUCKET`, `S3_ACCESS_KEY`, `S3_SECRET_KEY` | your bucket's name and the access key pair |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_STARTTLS`, `SMTP_FROM` | any SMTP provider. For example, Gmail with an app password: `smtp.gmail.com`, `587`, `true`, with `SMTP_FROM` set to that Gmail address |
+| `SENTRY_DSN` | optional: errors to Sentry (set it on Render too) |
+
+Pushing to `main` redeploys both Vercel and Render. To run migrations by hand: `cd backend && DATABASE_URL=<neon direct> ../.venv/Scripts/python -m alembic upgrade head`. Backups: Neon's point-in-time restore. Supabase pauses free projects after a week of inactivity; if file uploads or downloads start failing, restore the project in its dashboard. The free Render Key Value instance loses *queued* jobs if it restarts; reprocess them, or move it to a paid plan.

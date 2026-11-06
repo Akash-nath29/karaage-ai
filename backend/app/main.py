@@ -1,6 +1,7 @@
 import logging
 from collections.abc import Awaitable, Callable
 
+import sentry_sdk
 from fastapi import APIRouter, FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 
@@ -25,6 +26,9 @@ logging.basicConfig(
     level=settings.log_level,
     format="%(asctime)s level=%(levelname)s logger=%(name)s %(message)s",
 )
+
+if settings.sentry_dsn:
+    sentry_sdk.init(dsn=settings.sentry_dsn)  # its FastAPI integration switches on by itself (D33)
 
 app = FastAPI(title="Karaage API")
 app.add_exception_handler(AppError, app_error_handler)

@@ -9,6 +9,7 @@ pgvector>=0.4
 numpy>=1.26  # chunk → topic similarity (pgvector depends on it too)
 celery[redis]>=5.5
 boto3>=1.35
+sentry-sdk>=2.20  # errors from the API and the worker, when SENTRY_DSN is set (D33)
 google-genai>=1.30
 # AGPL-3.0: see docs/decisions.md Q2
 pymupdf>=1.26

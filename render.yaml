@@ -1,0 +1,42 @@
+# Render Blueprint (docs/decisions.md D37): the Celery worker and its Redis. The frontend and API are on Vercel.
+# Render → New → Blueprint → this repo. The `sync: false` values are asked for once, at creation.
+services:
+  - type: worker
+    name: karaage-worker
+    runtime: docker
+    region: singapore # next to Neon (aws-ap-southeast-1) and Vercel (sin1)
+    # plan omitted = the cheapest worker plan (0.5 CPU, 512 MB). OOM on big scans → --concurrency=1 or a bigger plan.
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    dockerCommand: celery -A app.workers.celery_app worker --loglevel=INFO --concurrency=2
+    preDeployCommand: alembic upgrade head
+    envVars:
+      - key: REDIS_URL
+        fromService: { type: keyvalue, name: karaage-redis, property: connectionString }
+      - key: DATABASE_URL # Neon's DIRECT connection string (not -pooler): migrations and a long-lived worker
+        sync: false
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: S3_ENDPOINT_URL # Supabase: https://<project-ref>.storage.supabase.co/storage/v1/s3
+        sync: false
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ACCESS_KEY
+        sync: false
+      - key: S3_SECRET_KEY
+        sync: false
+      - key: S3_REGION # Supabase: the region shown under Storage → S3 (e.g. ap-southeast-1)
+        sync: false
+      - key: SENTRY_DSN
+        sync: false
+
+  - type: keyvalue
+    name: karaage-redis
+    region: singapore
+    plan: free # ponytail: no persistence, a restart drops queued jobs; paid plan when that matters (D37)
+    maxmemoryPolicy: noeviction # a broker must never evict queued tasks
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: Vercel functions have no fixed IPs; the password and TLS still apply

@@ -20,7 +20,7 @@ Format: `- [x] item — test: path/to/test`
 - [x] PRD review: ambiguities, risks, missing details (`docs/decisions.md`)
 - [x] Q1–Q4 answered (provider, parsing, batch trigger, search)
 - [x] Q5 lesson schema shape: sections with roles + typed blocks (approved 2026-11-06)
-- [ ] Q6 production domain (before deployment; you have none yet, 2026-11-06)
+- [x] Q6 production domain: none needed. Frontend and API share one Vercel project (2026-11-06, D37)
 - [ ] Benchmark course materials provided (M14, before end of Phase 2)
 
 ## Phase 1: Foundation (single-user, D5)
@@ -155,11 +155,11 @@ Known:
 - RLS covers workspace content and personal data; `workspaces`/`workspace_members` and private-lesson visibility are checked in code only (D27).
 
 ## Phase 6: Productization
-**Exit:** all 7 acceptance workflows pass against a deployed environment. **Deployment is deferred** (no domain yet, D33): the rest is done and the 7 workflows pass on the local stack.
+**Exit:** all 7 acceptance workflows pass against a deployed environment. The deployment config is ready (D37) but nothing is deployed yet. The rest is done, and the 7 workflows pass on the local stack.
 
 - [x] Personal dashboard + learning analytics (§I, Screen 1, `GET /users/me/learning-analytics`, D31) — test: `test_learning_analytics_and_usage`; E2E (dashboard after sign-up)
 - [x] Shared learning resources: the workspace's lessons (shared + your private ones) — test: `test_lesson_visibility`
 - [x] Usage dashboard and limits: per workspace (per member for admins), per person, `USER_MONTHLY_TOKENS` (§12.6, D30) — test: `test_learning_analytics_and_usage`
 - [x] Rate-limit review (sign-in, registration, password reset, verification, invitations) and security testing (route sweep, tenant isolation, RLS, CSRF, token tampering, viewers can't read answer keys) — test: `test_access.py`, `test_auth.py`
-- [ ] Sentry, backups (deferred with deployment, D33)
-- [ ] Dockerfiles, deployment (Vercel + Railway/Render), deployment docs (deferred: Q6, D33)
+- [ ] Sentry, backups: built (`SENTRY_DSN`, Neon point-in-time restore, D33). Tick once an error from the deployed app reaches Sentry.
+- [ ] Deployment (Vercel frontend + API, Render worker + Redis, Neon, Supabase Storage; D37): `vercel.json`, `api/index.py`, `render.yaml`, README "Deploy". Migrations checked as a non-superuser on fresh Postgres 17. Tick when the 7 acceptance workflows pass on the deployed app.

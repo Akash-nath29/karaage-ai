@@ -1,5 +1,7 @@
+import re
 from pathlib import Path
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ROOT_ENV = Path(__file__).resolve().parents[2] / ".env"
@@ -12,6 +14,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+psycopg://semsaviour:semsaviour@127.0.0.1:5432/semsaviour"
     redis_url: str = "redis://127.0.0.1:6380/0"
     log_level: str = "INFO"
+    sentry_dsn: str = ""  # empty = Sentry off (D33)
 
     # S3-compatible object storage (MinIO in dev, R2/S3 in prod)
     s3_endpoint_url: str = "http://127.0.0.1:9000"
@@ -90,6 +93,12 @@ class Settings(BaseSettings):
     retrieval_top_k: int = 8
     # Keyword ranking's weight in fusion (vector = 1). 0 = vector only. Benchmark: docs/decisions.md D9.
     retrieval_keyword_weight: float = 0.3
+
+    @field_validator("database_url")
+    @classmethod
+    def _psycopg_driver(cls, url: str) -> str:
+        # Hosted Postgres (Neon, Render) hands out postgres:// or postgresql:// URLs; SQLAlchemy needs the driver.
+        return re.sub(r"^postgres(ql)?://", "postgresql+psycopg://", url)
 
 
 settings = Settings()

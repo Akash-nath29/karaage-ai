@@ -1,7 +1,11 @@
+import sentry_sdk
 from celery import Celery
 
 import app.database.models  # noqa: F401  full metadata so foreign keys resolve
 from app.config import settings
+
+if settings.sentry_dsn:
+    sentry_sdk.init(dsn=settings.sentry_dsn)  # its Celery integration switches on by itself (D33)
 
 celery_app = Celery("semsaviour", broker=settings.redis_url, include=["app.workers.ingestion_tasks", "app.workers.research_tasks", "app.workers.generation_tasks", "app.workers.assessment_tasks"])
 celery_app.conf.update(

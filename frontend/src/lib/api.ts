@@ -47,7 +47,9 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   if (!res.ok) {
     const detail = (await res.json().catch(() => null))?.detail
     // FastAPI sends a string for HTTP errors and a list of issues for 422 validation errors.
-    throw new ApiError(res.status, typeof detail === 'string' ? detail : (detail?.[0]?.msg ?? res.statusText))
+    // A 413 without a detail comes from Vercel's 4.5 MB body limit, before the API sees it (D37).
+    const fallback = res.status === 413 ? 'The file is too large to upload.' : res.statusText
+    throw new ApiError(res.status, typeof detail === 'string' ? detail : (detail?.[0]?.msg ?? fallback))
   }
   return res.status === 204 ? (undefined as T) : res.json()
 }

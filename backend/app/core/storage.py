@@ -18,7 +18,8 @@ def _client():  # type: ignore[no-untyped-def]  # boto3 clients are dynamically 
         aws_access_key_id=settings.s3_access_key,
         aws_secret_access_key=settings.s3_secret_key,
         region_name=settings.s3_region,
-        config=Config(signature_version="s3v4", retries={"max_attempts": 3}),
+        # Path-style (endpoint/bucket/key): Supabase Storage needs it, and MinIO, R2 and S3 all accept it (D37).
+        config=Config(signature_version="s3v4", s3={"addressing_style": "path"}, retries={"max_attempts": 3}),
     )
 
 
