@@ -10,7 +10,8 @@ numpy>=1.26  # chunk → topic similarity (pgvector depends on it too)
 celery[redis]>=5.5
 boto3>=1.35
 sentry-sdk>=2.20  # errors from the API and the worker, when SENTRY_DSN is set (D33)
-google-genai>=1.30
+google-genai>=1.30,<3  # built and tested on 2.x; 3.0 swapped httpx for httpx2, upgrade deliberately
+httpx>=0.28  # imported directly (Tavily, providers); don't rely on google-genai pulling it in
 # AGPL-3.0: see docs/decisions.md Q2
 pymupdf>=1.26
 python-docx>=1.2
