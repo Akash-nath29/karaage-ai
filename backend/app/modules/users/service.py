@@ -144,9 +144,9 @@ def _email_token(db: Session, user: User, purpose: str, hours: int) -> str:
 
 def send_verification(db: Session, user: User) -> bool:
     token = _email_token(db, user, "verify", 24)
-    return mail.send(user.email, "Confirm your email for SemSaviour",
+    return mail.send(user.email, "Confirm your email for Karaage",
                      f"Hi {user.display_name},\n\nConfirm your email address:\n{settings.app_url}/verify-email?token={token}\n\n"
-                     "The link works for 24 hours. If you didn't create a SemSaviour account, ignore this email.")
+                     "The link works for 24 hours. If you didn't create a Karaage account, ignore this email.")
 
 
 def resend_verification(db: Session, user: User) -> None:
@@ -183,7 +183,7 @@ def forgot_password(db: Session, email: str, ip: str | None) -> None:
     user = db.scalar(select(User).where(User.email == email))
     if user and user.password_hash != "!":
         token = _email_token(db, user, "reset", 1)
-        mail.send(user.email, "Reset your SemSaviour password",
+        mail.send(user.email, "Reset your Karaage password",
                   f"Hi {user.display_name},\n\nChoose a new password:\n{settings.app_url}/reset-password?token={token}\n\n"
                   "The link works for 1 hour. If you didn't ask for this, ignore this email: your password stays the same.")
 

@@ -1,4 +1,4 @@
-# SemSaviour: Personal AI Tutor
+# Karaage: Personal AI Tutor
 
 Turns your syllabus, textbooks and notes into structured lessons, a tutor and practice quizzes. Spec: `PRD.md`. Progress: `CHECKLIST.md`. Decisions and deviations: `docs/decisions.md`.
 

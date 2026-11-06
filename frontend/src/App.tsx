@@ -78,7 +78,7 @@ function Shell() {
       <header className="border-b">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-3">
           <Link to="/" className="font-semibold">
-            SemSaviour
+            Karaage
           </Link>
           <AccountMenu />
         </div>

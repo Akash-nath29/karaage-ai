@@ -166,7 +166,7 @@ def invite(db: Session, access: Access, data: InvitationIn) -> InvitationCreated
     url = f"{settings.app_url}/invite/{token}"
     emailed = bool(email) and mail.send(
         email,  # type: ignore[arg-type]
-        f"{access.user.display_name} invited you to “{workspace.name}” on SemSaviour",
+        f"{access.user.display_name} invited you to “{workspace.name}” on Karaage",
         f"{access.user.display_name} invited you to join the workspace “{workspace.name}” as {data.role}.\n\n"
         f"Accept the invitation:\n{url}\n\nSign in or create an account with this email address ({email}). "
         f"The link expires in {data.expires_in_days} days.")

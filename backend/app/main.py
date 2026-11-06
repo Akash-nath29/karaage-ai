@@ -26,7 +26,7 @@ logging.basicConfig(
     format="%(asctime)s level=%(levelname)s logger=%(name)s %(message)s",
 )
 
-app = FastAPI(title="SemSaviour API")
+app = FastAPI(title="Karaage API")
 app.add_exception_handler(AppError, app_error_handler)
 UNSAFE = {"POST", "PUT", "PATCH", "DELETE"}
 

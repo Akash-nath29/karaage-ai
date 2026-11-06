@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     smtp_user: str = ""
     smtp_password: str = ""
     smtp_starttls: bool = False
-    smtp_from: str = "SemSaviour <no-reply@semsaviour.local>"
+    smtp_from: str = "Karaage <no-reply@karaage.local>"
 
     # Embeddings: provider is "gemini" or "openai" (OpenAI or any OpenAI-compatible local endpoint).
     # Dimension is fixed at 1536 by the database column (docs/decisions.md Q1).
