@@ -29,8 +29,7 @@ services:
         sync: false
       - key: S3_REGION # Supabase: the region shown under Storage → S3 (e.g. ap-southeast-1)
         sync: false
-      - key: SENTRY_DSN
-        sync: false
+      # Optional, add in the dashboard later: SENTRY_DSN (errors to Sentry, D33)
 
   - type: keyvalue
     name: karaage-redis
