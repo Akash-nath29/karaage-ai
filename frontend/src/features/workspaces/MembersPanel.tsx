@@ -61,7 +61,8 @@ export function MembersPanel({ workspaceId, role }: { workspaceId: string; role:
                                 onChange={(e) => changeRole.mutate({ userId: m.user.id, role: e.target.value as InviteRole })}>
                     {[...new Set([...assignable(role), m.role])].map((r) => <option key={r} value={r}>{r}</option>)}
                   </NativeSelect>
-                  <Button variant="ghost" size="sm" disabled={remove.isPending} onClick={() => remove.mutate(m.user.id)}>
+                  <Button variant="ghost" size="sm" disabled={remove.isPending} pending={remove.isPending && remove.variables === m.user.id}
+                          onClick={() => remove.mutate(m.user.id)}>
                     Remove
                   </Button>
                 </>
@@ -69,7 +70,7 @@ export function MembersPanel({ workspaceId, role }: { workspaceId: string; role:
                 <Badge variant={m.role === 'owner' ? 'default' : 'secondary'}>{m.role}</Badge>
               )}
               {self && m.role !== 'owner' && (
-                <Button variant="ghost" size="sm" disabled={remove.isPending}
+                <Button variant="ghost" size="sm" pending={remove.isPending}
                         onClick={() => remove.mutate(m.user.id, { onSuccess: () => navigate('/') })}>
                   Leave
                 </Button>
@@ -119,7 +120,7 @@ function InvitePanel({ workspaceId, role }: { workspaceId: string; role: Role })
             {assignable(role).map((r) => <option key={r} value={r}>{r}</option>)}
           </NativeSelect>
         </div>
-        <Button type="submit" disabled={invite.isPending}>Invite</Button>
+        <Button type="submit" pending={invite.isPending}>Invite</Button>
       </form>
       <p className="text-xs text-muted-foreground">A {inviteRole} {ROLE_HELP[inviteRole]}. Invitations expire after 7 days.</p>
       {invite.error && <p role="alert" className="text-sm text-destructive">{invite.error.message}</p>}
@@ -152,7 +153,7 @@ function InvitePanel({ workspaceId, role }: { workspaceId: string; role: Role })
                   {i.email ? '' : `${i.uses}${i.max_uses ? `/${i.max_uses}` : ''} joined · `}expires {when(i.expires_at)}
                 </span>
                 {atLeast(role, i.role === 'admin' ? 'owner' : 'admin') && (
-                  <Button variant="ghost" size="sm" disabled={revoke.isPending} onClick={() => revoke.mutate(i.id)}>
+                  <Button variant="ghost" size="sm" disabled={revoke.isPending} pending={revoke.isPending && revoke.variables === i.id} onClick={() => revoke.mutate(i.id)}>
                     Revoke
                   </Button>
                 )}

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 
 import { ConfirmDelete } from '@/components/confirm-delete'
@@ -53,7 +52,7 @@ export function TutorPage() {
           <div className="flex gap-2">
             <Button
               variant="outline"
-              disabled={create.isPending}
+              pending={create.isPending}
               onClick={() => create.mutate(contextOf(s!), { onSuccess: (n) => navigate(`/tutor/${n.id}`) })}
             >
               New conversation
@@ -88,30 +87,5 @@ export function TutorPage() {
         The tutor can make mistakes. Check important facts against the cited sources.
       </p>
     </div>
-  )
-}
-
-/** The tutor beside a lesson: the conversation starts with the first question. */
-export function TutorPanel({ context }: { context: SessionContext }) {
-  const create = useCreateSession()
-  const [sessionId, setSessionId] = useState<string | null>(null)
-  return (
-    <section aria-labelledby="tutor-panel-title" className="grid gap-3 border-t pt-6">
-      <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 id="tutor-panel-title" className="text-lg font-medium">
-          Ask the tutor about this lesson
-        </h2>
-        {sessionId && (
-          <Link to={`/tutor/${sessionId}`} className="text-sm text-muted-foreground hover:underline">
-            Open as a full conversation
-          </Link>
-        )}
-      </div>
-      <TutorChat
-        sessionId={null}
-        ensureSession={async () => (await create.mutateAsync(context)).id}
-        onSession={setSessionId}
-      />
-    </section>
   )
 }

@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react'
 export type JobEvent = { stage: string; message: string; progress: number | null }
 
 /** Live progress of a background job over SSE (native EventSource: same-origin GET, reconnects with
- * Last-Event-ID). When the job ends, `refresh` is invalidated so the page shows the final state. */
-export function useJobProgress(jobId: string | null, active: boolean, refresh: QueryKey, alsoRefresh?: QueryKey) {
+ * Last-Event-ID). When the job ends, `refresh` (and every `alsoRefresh` key) is invalidated so the page shows the
+ * final state. */
+export function useJobProgress(jobId: string | null, active: boolean, refresh: QueryKey, ...alsoRefresh: QueryKey[]) {
   const qc = useQueryClient()
   const [event, setEvent] = useState<JobEvent | null>(null)
-  const key = JSON.stringify([refresh, ...(alsoRefresh ? [alsoRefresh] : [])]) // stable dependency for inline arrays
+  const key = JSON.stringify([refresh, ...alsoRefresh]) // stable dependency for inline arrays
   useEffect(() => {
     if (!jobId || !active) return
     const source = new EventSource(`/api/v1/jobs/${jobId}/events`)

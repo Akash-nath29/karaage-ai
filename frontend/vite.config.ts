@@ -7,5 +7,6 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
   // Same-origin API in dev: no CORS needed. 127.0.0.1, not localhost (IPv6 stall on Windows).
-  server: { proxy: { '/api': 'http://127.0.0.1:8000' } },
+  // host: Vite's default "localhost" can bind IPv6 only ([::1]), but email links, APP_URL and the tests use 127.0.0.1.
+  server: { host: '127.0.0.1', proxy: { '/api': 'http://127.0.0.1:8000' } },
 })

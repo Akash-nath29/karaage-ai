@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-08T00:00:00Z",
+  "title": "Design System: Karaage",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Graphite", "canonical": "oklch(0.205 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.439 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.87 0 0)"] },
+      "primary-foreground": { "role": "neutral", "displayName": "On Graphite", "canonical": "oklch(0.985 0 0)", "tonalRamp": ["oklch(0.15 0 0)", "oklch(0.27 0 0)", "oklch(0.4 0 0)", "oklch(0.53 0 0)", "oklch(0.66 0 0)", "oklch(0.79 0 0)", "oklch(0.92 0 0)", "oklch(0.985 0 0)"] },
+      "foreground": { "role": "neutral", "displayName": "Ink", "canonical": "oklch(0.145 0 0)", "tonalRamp": ["oklch(0.145 0 0)", "oklch(0.205 0 0)", "oklch(0.269 0 0)", "oklch(0.371 0 0)", "oklch(0.439 0 0)", "oklch(0.556 0 0)", "oklch(0.708 0 0)", "oklch(0.87 0 0)"] },
+      "background": { "role": "neutral", "displayName": "Paper", "canonical": "oklch(1 0 0)", "tonalRamp": ["oklch(0.15 0 0)", "oklch(0.27 0 0)", "oklch(0.4 0 0)", "oklch(0.53 0 0)", "oklch(0.66 0 0)", "oklch(0.79 0 0)", "oklch(0.92 0 0)", "oklch(1 0 0)"] },
+      "card": { "role": "neutral", "displayName": "Paper (card)", "canonical": "oklch(1 0 0)" },
+      "secondary": { "role": "neutral", "displayName": "Mist (secondary)", "canonical": "oklch(0.97 0 0)" },
+      "muted": { "role": "neutral", "displayName": "Mist", "canonical": "oklch(0.97 0 0)", "tonalRamp": ["oklch(0.15 0 0)", "oklch(0.27 0 0)", "oklch(0.4 0 0)", "oklch(0.53 0 0)", "oklch(0.66 0 0)", "oklch(0.79 0 0)", "oklch(0.92 0 0)", "oklch(0.97 0 0)"] },
+      "muted-foreground": { "role": "neutral", "displayName": "Pencil", "canonical": "oklch(0.556 0 0)" },
+      "border": { "role": "neutral", "displayName": "Hairline", "canonical": "oklch(0.922 0 0)" },
+      "input": { "role": "neutral", "displayName": "Hairline (field)", "canonical": "oklch(0.922 0 0)" },
+      "ring": { "role": "neutral", "displayName": "Focus Grey", "canonical": "oklch(0.708 0 0)" },
+      "destructive": { "role": "error", "displayName": "Alarm Red", "canonical": "oklch(0.577 0.245 27.325)", "tonalRamp": ["oklch(0.15 0.08 27.3)", "oklch(0.27 0.13 27.3)", "oklch(0.4 0.18 27.3)", "oklch(0.577 0.245 27.325)", "oklch(0.66 0.2 27.3)", "oklch(0.79 0.12 27.3)", "oklch(0.9 0.06 27.3)", "oklch(0.96 0.025 27.3)"] },
+      "revise-amber": { "role": "tertiary", "displayName": "Revise Amber (Tailwind amber-600; convention, not a custom property)", "canonical": "oklch(0.666 0.179 58.318)", "tonalRamp": ["oklch(0.279 0.077 45.635)", "oklch(0.414 0.112 45.904)", "oklch(0.473 0.137 46.201)", "oklch(0.555 0.163 48.998)", "oklch(0.666 0.179 58.318)", "oklch(0.769 0.188 70.08)", "oklch(0.924 0.12 95.746)", "oklch(0.987 0.022 95.277)"] },
+      "revise-amber-wash": { "role": "tertiary", "displayName": "Amber Wash (amber-50)", "canonical": "oklch(0.987 0.022 95.277)" },
+      "revise-amber-text": { "role": "tertiary", "displayName": "Amber Ink (amber-700)", "canonical": "oklch(0.555 0.163 48.998)" }
+    },
+    "typographyMeta": {
+      "headline": { "displayName": "Headline", "purpose": "The one page title per page (course, workspace, topic, dashboard)." },
+      "lesson-section": { "displayName": "Lesson section", "purpose": "Section headings inside a lesson." },
+      "title": { "displayName": "Title", "purpose": "Section and panel headings: Next stop, Done reading?, Set up this course." },
+      "body": { "displayName": "Body (lesson)", "purpose": "Lesson markdown, relaxed leading, capped at 65ch." },
+      "body-ui": { "displayName": "Body UI", "purpose": "The dominant UI size: descriptions, metadata, buttons, tabs." },
+      "label": { "displayName": "Label", "purpose": "Badges and station names on the unit line." }
+    },
+    "shadows": [
+      { "name": "floating-action", "value": "0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)", "purpose": "Only the fixed phone 'Ask the tutor' button. Everything else is flat." }
+    ],
+    "motion": [
+      { "name": "station-fill", "value": "background-color, border-color, box-shadow 300ms ease-out", "purpose": "Station dot fills and the next-stop ring ease in, so the ring visibly moves on; none under prefers-reduced-motion." },
+      { "name": "control-transition", "value": "all 150ms cubic-bezier(0.4, 0, 0.2, 1)", "purpose": "Tailwind default transition on buttons, badges, tabs and rows." },
+      { "name": "press", "value": "translateY(1px)", "purpose": "Buttons press down 1px when active." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "40rem" },
+      { "name": "md", "value": "48rem" },
+      { "name": "lg", "value": "64rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one filled action per view; a trailing arrow marks forward motion.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Check yourself <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></button>",
+      "css": ".ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 2.25rem; padding: 0 10px; border: 1px solid transparent; border-radius: 0.625rem; font: 500 0.875rem/1 'Geist Variable', sans-serif; cursor: pointer; transition: all 150ms cubic-bezier(0.4,0,0.2,1); outline: none; } .ds-btn-primary { background: var(--primary, oklch(0.205 0 0)); color: var(--primary-foreground, oklch(0.985 0 0)); } .ds-btn-primary:hover { background: oklch(0.205 0 0 / 80%); } .ds-btn:focus-visible { border-color: var(--ring, oklch(0.708 0 0)); box-shadow: 0 0 0 3px oklch(0.708 0 0 / 50%); } .ds-btn:active { transform: translateY(1px); }"
+    },
+    {
+      "name": "Pending Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "A request in flight: spinner before the label, aria-busy, disabled, still at full colour.",
+      "html": "<button class=\"ds-btn-pending\" aria-busy=\"true\" disabled><svg class=\"ds-spin\" width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M21 12a9 9 0 1 1-6.219-8.56\"/></svg>Start the check</button>",
+      "css": ".ds-btn-pending { display: inline-flex; align-items: center; gap: 6px; height: 2.25rem; padding: 0 10px; border: 1px solid transparent; border-radius: 0.625rem; background: var(--primary, oklch(0.205 0 0)); color: var(--primary-foreground, oklch(0.985 0 0)); font: 500 0.875rem/1 'Geist Variable', sans-serif; pointer-events: none; } .ds-spin { animation: ds-spin 1s linear infinite; } @keyframes ds-spin { to { transform: rotate(360deg); } }"
+    },
+    {
+      "name": "Outline and Ghost Buttons",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary actions step down from the primary: hairline outline, or ghost with a Mist hover.",
+      "html": "<div style=\"display:flex;gap:8px\"><button class=\"ds-btn-o\">Back to the course</button><button class=\"ds-btn-g\">Take a new check</button></div>",
+      "css": ".ds-btn-o, .ds-btn-g { height: 2rem; padding: 0 10px; border-radius: 0.625rem; font: 500 0.875rem/1 'Geist Variable', sans-serif; color: var(--foreground, oklch(0.145 0 0)); cursor: pointer; transition: all 150ms; outline: none; } .ds-btn-o { background: var(--background, #fff); border: 1px solid var(--border, oklch(0.922 0 0)); } .ds-btn-g { background: transparent; border: 1px solid transparent; } .ds-btn-o:hover, .ds-btn-g:hover { background: var(--muted, oklch(0.97 0 0)); } .ds-btn-o:focus-visible, .ds-btn-g:focus-visible { border-color: var(--ring, oklch(0.708 0 0)); box-shadow: 0 0 0 3px oklch(0.708 0 0 / 50%); }"
+    },
+    {
+      "name": "Input",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Transparent field, hairline stroke, Focus Grey ring.",
+      "html": "<input class=\"ds-input\" placeholder=\"e.g. another worked example with numbers\" />",
+      "css": ".ds-input { height: 2rem; width: 100%; padding: 4px 10px; border: 1px solid var(--input, oklch(0.922 0 0)); border-radius: 0.625rem; background: transparent; color: var(--foreground, oklch(0.145 0 0)); font: 400 0.875rem 'Geist Variable', sans-serif; outline: none; transition: border-color 150ms, box-shadow 150ms; } .ds-input::placeholder { color: var(--muted-foreground, oklch(0.556 0 0)); } .ds-input:focus-visible { border-color: var(--ring, oklch(0.708 0 0)); box-shadow: 0 0 0 3px oklch(0.708 0 0 / 50%); }"
+    },
+    {
+      "name": "Route Tabs",
+      "kind": "nav",
+      "refersTo": "route-tab",
+      "description": "Link tabs over a hairline; the current tab gets a 2px Ink underline; wraps on narrow screens.",
+      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab ds-tab-on\" href=\"#\">Topics</a><a class=\"ds-tab\" href=\"#\">Practice</a><a class=\"ds-tab\" href=\"#\">Materials</a><a class=\"ds-tab\" href=\"#\">Settings</a></nav>",
+      "css": ".ds-tabs { display: flex; flex-wrap: wrap; column-gap: 4px; border-bottom: 1px solid var(--border, oklch(0.922 0 0)); } .ds-tab { margin-bottom: -1px; padding: 10px 12px; border-bottom: 2px solid transparent; color: var(--muted-foreground, oklch(0.556 0 0)); font: 500 0.875rem 'Geist Variable', sans-serif; text-decoration: none; transition: color 150ms; outline: none; } .ds-tab:hover { color: var(--foreground, oklch(0.145 0 0)); } .ds-tab-on { border-color: var(--foreground, oklch(0.145 0 0)); color: var(--foreground, oklch(0.145 0 0)); } .ds-tab:focus-visible { box-shadow: 0 0 0 3px oklch(0.708 0 0 / 50%); }"
+    },
+    {
+      "name": "Badges",
+      "kind": "chip",
+      "refersTo": "badge",
+      "description": "Pills for status: graphite, secondary, destructive wash, outline.",
+      "html": "<div style=\"display:flex;gap:6px\"><span class=\"ds-badge\">Next stop</span><span class=\"ds-badge ds-badge-sec\">Studied</span><span class=\"ds-badge ds-badge-out\">Optional</span><span class=\"ds-badge ds-badge-dest\">Revision required</span></div>",
+      "css": ".ds-badge { display: inline-flex; align-items: center; height: 1.25rem; padding: 2px 8px; border: 1px solid transparent; border-radius: 1.625rem; background: var(--primary, oklch(0.205 0 0)); color: var(--primary-foreground, oklch(0.985 0 0)); font: 500 0.75rem 'Geist Variable', sans-serif; white-space: nowrap; } .ds-badge-sec { background: var(--secondary, oklch(0.97 0 0)); color: var(--secondary-foreground, oklch(0.205 0 0)); } .ds-badge-out { background: transparent; border-color: var(--border, oklch(0.922 0 0)); color: var(--foreground, oklch(0.145 0 0)); } .ds-badge-dest { background: oklch(0.577 0.245 27.325 / 10%); color: var(--destructive, oklch(0.577 0.245 27.325)); }"
+    },
+    {
+      "name": "Station Line",
+      "kind": "custom",
+      "refersTo": "station-dot",
+      "description": "Topics as stops on a line: done filled, studied half-filled, revise amber, todo hollow; one ringed next stop.",
+      "html": "<ol class=\"ds-line\"><li><span class=\"ds-dot ds-done\"></span>Processes and Threads</li><li><span class=\"ds-dot ds-studied\"></span>CPU Scheduling</li><li><span class=\"ds-dot ds-todo\"></span>Deadlock Fundamentals</li><li><span class=\"ds-dot ds-revise ds-ring\"></span>Thrashing <span style=\"margin-left:auto;font-size:.75rem;color:oklch(0.555 0.163 48.998)\">Revise · last check 30%</span></li></ol>",
+      "css": ".ds-line { list-style: none; margin: 0; padding: 0; position: relative; font: 400 1rem 'Geist Variable', sans-serif; color: var(--foreground, oklch(0.145 0 0)); } .ds-line::before { content: ''; position: absolute; left: 6px; top: 20px; bottom: 20px; width: 2px; background: var(--border, oklch(0.922 0 0)); } .ds-line li { position: relative; display: flex; align-items: center; gap: 16px; padding: 10px 12px 10px 0; } .ds-dot { position: relative; z-index: 1; width: 0.875rem; height: 0.875rem; border-radius: 9999px; border: 2px solid; box-sizing: border-box; flex-shrink: 0; transition: background-color 300ms ease-out, border-color 300ms ease-out, box-shadow 300ms ease-out; } .ds-done { border-color: oklch(0.145 0 0); background: oklch(0.145 0 0); } .ds-studied { border-color: oklch(0.145 0 0); background: linear-gradient(90deg, oklch(0.145 0 0) 50%, #fff 50%); } .ds-revise { border-color: oklch(0.666 0.179 58.318); background: oklch(0.962 0.059 95.617); } .ds-todo { border-color: oklch(0.556 0 0 / 60%); background: #fff; } .ds-ring { box-shadow: 0 0 0 2px #fff, 0 0 0 4px oklch(0.145 0 0); } @media (prefers-reduced-motion: reduce) { .ds-dot { transition: none; } }"
+    },
+    {
+      "name": "Next-Stop Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "The one-primary-action panel: course home, dashboard Continue, and post-check outcome.",
+      "html": "<section class=\"ds-panel\"><div><h2 class=\"ds-panel-t\">Next stop: Thrashing</h2><p class=\"ds-panel-d\">Deadlocks · Your last check came in under the bar: worth another pass.</p><p class=\"ds-panel-d\">2 of 4 topics completed</p></div><a class=\"ds-panel-a\" href=\"#\">Revise it <svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"m12 5 7 7-7 7\"/></svg></a></section>",
+      "css": ".ds-panel { display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 16px; padding: 1.25rem; border: 1px solid var(--border, oklch(0.922 0 0)); border-radius: 0.875rem; background: var(--background, #fff); font-family: 'Geist Variable', sans-serif; } .ds-panel-t { margin: 0 0 4px; font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; color: var(--foreground, oklch(0.145 0 0)); text-wrap: balance; } .ds-panel-d { margin: 0; font-size: 0.875rem; line-height: 1.25rem; color: var(--muted-foreground, oklch(0.556 0 0)); font-variant-numeric: tabular-nums; } .ds-panel-a { display: inline-flex; align-items: center; gap: 6px; height: 2.25rem; padding: 0 10px; border-radius: 0.625rem; background: var(--primary, oklch(0.205 0 0)); color: var(--primary-foreground, oklch(0.985 0 0)); font-size: 0.875rem; font-weight: 500; text-decoration: none; transition: background 150ms; outline: none; } .ds-panel-a:hover { background: oklch(0.205 0 0 / 80%); } .ds-panel-a:focus-visible { box-shadow: 0 0 0 3px oklch(0.708 0 0 / 50%); } @media (max-width: 40rem) { .ds-panel { grid-template-columns: 1fr; } }"
+    },
+    {
+      "name": "Setup Checklist",
+      "kind": "custom",
+      "refersTo": "panel",
+      "description": "Steps in dependency order between hairlines; state icon gutter; only the current step open.",
+      "html": "<ol class=\"ds-steps\"><li><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg><div><h3>Upload the syllabus</h3><p>syllabus.pdf</p></div><button class=\"ds-step-btn\">Change</button></li><li><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><circle cx=\"12\" cy=\"12\" r=\"1\"/></svg><div><h3>Confirm the units and topics</h3><p>Check the draft, fix anything the parser got wrong, then confirm.</p></div><span></span></li><li class=\"ds-wait\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-dasharray=\"3 3\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/></svg><div><h3>Lessons for every topic</h3><p>Written automatically once the topics are confirmed.</p></div><span></span></li></ol>",
+      "css": ".ds-steps { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--border, oklch(0.922 0 0)); border-bottom: 1px solid var(--border, oklch(0.922 0 0)); font-family: 'Geist Variable', sans-serif; color: var(--foreground, oklch(0.145 0 0)); } .ds-steps li { display: grid; grid-template-columns: 1.75rem minmax(0,1fr) auto; column-gap: 12px; align-items: start; padding: 16px 0; } .ds-steps li + li { border-top: 1px solid var(--border, oklch(0.922 0 0)); } .ds-steps h3 { margin: 0 0 6px; font-size: 1rem; font-weight: 500; } .ds-steps p { margin: 0; font-size: 0.875rem; color: var(--muted-foreground, oklch(0.556 0 0)); max-width: 65ch; } .ds-wait, .ds-wait h3 { color: var(--muted-foreground, oklch(0.556 0 0)); } .ds-step-btn { height: 1.75rem; padding: 0 10px; border: 0; border-radius: 0.5rem; background: transparent; font: 500 0.8rem 'Geist Variable', sans-serif; cursor: pointer; } .ds-step-btn:hover { background: var(--muted, oklch(0.97 0 0)); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Graphite on Paper",
+    "overview": "Karaage is an achromatic, flat, quiet study tool: near-black graphite on white, one geometric sans (Geist), hairline borders and roomy vertical rhythm. Colour carries meaning, not mood. The only saturated hue in the app chrome is amber, and it means one thing: this topic needs revising. Destructive red marks errors and deletion. Everything else is a step on the neutral ramp.\n\nDensity is calm. Pages sit in a single narrow column (56rem), and the study session widens to 72rem only to make room for the tutor rail. Sections are separated by space and hairlines, not by boxes inside boxes. Each screen has one filled primary button for its main next step, and the other actions are outline, ghost or link buttons.\n\nThe system's signature is the station line: a course's topics drawn as stops on a line. Filled, half-filled, amber and hollow dots show progress, and one ringed dot marks the course's single next stop. The same next stop is named in the panel on the course home, on the dashboard and inside the session, so the learner never sees two competing \"next\" answers.",
+    "keyCharacteristics": [
+      "Achromatic OKLCH neutrals; graphite primary (oklch 0.205) on white.",
+      "One family, Geist Variable, for every role; hierarchy comes from size and weight (500/600), never from case or tracking.",
+      "Flat: depth comes from 1px rings and borders. There is one shadow in the app, on the floating phone tutor button.",
+      "Gently rounded rectangles (0.625rem controls, 0.875rem panels), with pill badges and round station dots.",
+      "One filled primary action per view; everything else steps down."
+    ],
+    "rules": [
+      { "name": "The Amber Means Revise Rule", "body": "Amber appears only where a topic needs another pass: the revise dot, its metadata text and the revise outcome panel. It is never decoration or a generic warning.", "section": "colors" },
+      { "name": "The Graphite Primary Rule", "body": "The primary is near-black, not a brand hue. Emphasis comes from filling a shape with graphite, not from adding colour.", "section": "colors" },
+      { "name": "The No-Shouting Rule", "body": "No uppercase and no letter-spaced labels anywhere in the build. Hierarchy is size plus weight 500/600 only.", "section": "typography" },
+      { "name": "The Hairline Rule", "body": "Separate with a hairline or with space, never with a shadow. The only shadow belongs to the one element that floats.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do give each view exactly one filled primary action, and step every other action down to outline, ghost or link.",
+      "Do separate with hairlines (`border`) and space; reserve the 10% foreground ring for Card.",
+      "Do use the `pending` button state for in-flight requests instead of disabling and fading the button.",
+      "Do express topic progress with StationDot states and name the course's one next stop with its ring and a \"Next stop\" badge.",
+      "Do cap reading text at 65ch and use `tabular-nums` for counts and scores.",
+      "Do make tabs that change content into links (RouteTabs), so back, reload and sharing land on the same tab."
+    ],
+    "donts": [
+      "Don't use amber for anything except revise states.",
+      "Don't add shadows to static surfaces; the only shadow belongs to the floating phone tutor button.",
+      "Don't set labels in uppercase or with wide letter-spacing; the build has none.",
+      "Don't introduce a second typeface or a brand hue; the primary is graphite.",
+      "Don't show more than one \"next\" destination on a screen."
+    ]
+  }
+}

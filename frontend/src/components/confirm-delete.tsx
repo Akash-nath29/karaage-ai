@@ -13,7 +13,7 @@ export function ConfirmDelete({ label, onConfirm, pending }: { label: string; on
     )
   return (
     <div className="flex items-center gap-2">
-      <Button variant="destructive" onClick={onConfirm} disabled={pending}>
+      <Button variant="destructive" onClick={onConfirm} pending={pending}>
         Confirm delete
       </Button>
       <Button variant="ghost" onClick={() => setArmed(false)}>

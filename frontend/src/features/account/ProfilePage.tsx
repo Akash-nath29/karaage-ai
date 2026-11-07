@@ -77,7 +77,7 @@ function AvatarEditor() {
           <Input id="avatar" type="file" accept="image/png,image/jpeg" disabled={set.isPending}
                  onChange={(e) => e.target.files?.[0] && set.mutate(e.target.files[0], { onSettled: () => (e.target.value = '') })} />
           {me.data.avatar_url && (
-            <Button variant="ghost" disabled={remove.isPending} onClick={() => remove.mutate()}>
+            <Button variant="ghost" pending={remove.isPending} onClick={() => remove.mutate()}>
               Remove
             </Button>
           )}
@@ -138,7 +138,7 @@ function DeleteAccount() {
           <Label htmlFor="delete-password">Your password</Label>
           <Input id="delete-password" name="password" type="password" autoComplete="current-password" required />
           <div className="flex gap-2">
-            <Button type="submit" variant="destructive" disabled={remove.isPending}>Delete my account</Button>
+            <Button type="submit" variant="destructive" pending={remove.isPending}>Delete my account</Button>
             <Button type="button" variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
           </div>
           {remove.error && <p role="alert" className="text-sm text-destructive">{remove.error.message}</p>}

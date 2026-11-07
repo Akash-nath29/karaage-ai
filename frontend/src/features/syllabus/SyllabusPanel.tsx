@@ -100,7 +100,7 @@ export function SyllabusPanel({ course }: { course: Course }) {
   )
 }
 
-function BatchStatus({ courseId, structure, canRun }: { courseId: string; structure: StructureOut; canRun: boolean }) {
+export function BatchStatus({ courseId, structure, canRun }: { courseId: string; structure: StructureOut; canRun: boolean }) {
   const cancel = useCancelBatch(courseId)
   const missing = useGenerateMissing(courseId)
   const outstanding = structure.topic_count - structure.lessons_ready - structure.lessons_pending
@@ -113,7 +113,7 @@ function BatchStatus({ courseId, structure, canRun }: { courseId: string; struct
             Writing lessons: {structure.lessons_ready} of {structure.topic_count} ready, {structure.lessons_pending} in progress or queued.
           </span>
           {canRun && (
-            <Button size="sm" variant="outline" disabled={cancel.isPending} onClick={() => cancel.mutate()}>
+            <Button size="sm" variant="outline" pending={cancel.isPending} onClick={() => cancel.mutate()}>
               Cancel queued lessons
             </Button>
           )}
@@ -122,7 +122,7 @@ function BatchStatus({ courseId, structure, canRun }: { courseId: string; struct
         <>
           <span>{outstanding} topics don't have a lesson yet.</span>
           {canRun && (
-            <Button size="sm" variant="outline" disabled={missing.isPending} onClick={() => missing.mutate()}>
+            <Button size="sm" variant="outline" pending={missing.isPending} onClick={() => missing.mutate()}>
               Generate missing lessons
             </Button>
           )}
@@ -133,7 +133,7 @@ function BatchStatus({ courseId, structure, canRun }: { courseId: string; struct
   )
 }
 
-function ChooseDocument({ course, syllabus, onDone }: { course: Course; syllabus: Syllabus | null; onDone: () => void }) {
+export function ChooseDocument({ course, syllabus, onDone }: { course: Course; syllabus: Syllabus | null; onDone: () => void }) {
   const id = useId()
   const documents = useDocuments(course.workspace_id)
   const link = useLinkSyllabus(course.id)
@@ -145,8 +145,8 @@ function ChooseDocument({ course, syllabus, onDone }: { course: Course; syllabus
   if (!options.length)
     return (
       <p className="text-sm text-muted-foreground">
-        Upload your syllabus under <strong>Study materials</strong> (type: Syllabus), then parse it here. A single PDF of
-        the whole programme works too: the course is found by its title and code.
+        Upload your syllabus first (type: Syllabus), then parse it here. A single PDF of the whole programme works too:
+        the course is found by its title and code.
       </p>
     )
   return (
@@ -168,7 +168,7 @@ function ChooseDocument({ course, syllabus, onDone }: { course: Course; syllabus
           ))}
         </NativeSelect>
       </div>
-      <Button type="submit" disabled={link.isPending}>
+      <Button type="submit" pending={link.isPending}>
         Parse syllabus
       </Button>
       {link.error && (
@@ -180,7 +180,7 @@ function ChooseDocument({ course, syllabus, onDone }: { course: Course; syllabus
   )
 }
 
-function DraftReview({ course, syllabus, replacing }: { course: Course; syllabus: Syllabus; replacing: boolean }) {
+export function DraftReview({ course, syllabus, replacing }: { course: Course; syllabus: Syllabus; replacing: boolean }) {
   const draft = syllabus.draft!
   const save = useSaveDraft(course.id)
   const confirm = useConfirm(course.id)
@@ -235,7 +235,7 @@ function DraftReview({ course, syllabus, replacing }: { course: Course; syllabus
   )
 }
 
-function EditStructure({ courseId, structure, onDone }: { courseId: string; structure: StructureOut; onDone: () => void }) {
+export function EditStructure({ courseId, structure, onDone }: { courseId: string; structure: StructureOut; onDone: () => void }) {
   const save = useSaveStructure(courseId)
   const initial = structure.units.length ? toStructure(structure) : { units: [{ title: '', hours: null, topics: [] }] }
   return (
@@ -259,7 +259,7 @@ function EditStructure({ courseId, structure, onDone }: { courseId: string; stru
 function ReparseButton({ courseId }: { courseId: string }) {
   const reparse = useReparse(courseId)
   return (
-    <Button variant="ghost" onClick={() => reparse.mutate()} disabled={reparse.isPending} title={reparse.error?.message}>
+    <Button variant="ghost" onClick={() => reparse.mutate()} pending={reparse.isPending} title={reparse.error?.message}>
       Re-parse syllabus
     </Button>
   )
@@ -283,7 +283,7 @@ function StructureView({ structure }: { structure: StructureOut }) {
             {u.topics.map((t) => (
               <li key={t.id} className="flex items-start justify-between gap-3 p-3">
                 <div className="grid min-w-0 gap-0.5">
-                  <Link to={t.lesson_id ? `/lessons/${t.lesson_id}` : `/topics/${t.id}`} className="font-medium hover:underline">
+                  <Link to={`/topics/${t.id}`} className="font-medium hover:underline">
                     {t.title}
                   </Link>
                   {t.subtopics.length > 0 && (
@@ -294,9 +294,7 @@ function StructureView({ structure }: { structure: StructureOut }) {
                   <Badge variant={t.status === 'lesson_available' ? 'default' : t.status === 'not_started' ? 'outline' : 'secondary'}>
                     {STATUS_LABEL[t.status]}
                   </Badge>
-                  <Link to={`/topics/${t.id}`} className="text-xs text-muted-foreground hover:underline">
-                    {t.material_count > 0 ? `${t.material_count} passages · ` : ''}topic details
-                  </Link>
+                  {t.material_count > 0 && <span className="text-xs text-muted-foreground">{t.material_count} passages</span>}
                 </div>
               </li>
             ))}

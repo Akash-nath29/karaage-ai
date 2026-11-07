@@ -8,42 +8,27 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
-import { TYPE_LABEL, useQuiz, useSubmitAttempt, type QuizQuestion } from '@/features/assessments/api'
+import { OBJECTIVE, TYPE_LABEL, useQuiz, useSubmitAttempt, type AttemptSummary, type QuizQuestion } from '@/features/assessments/api'
 import { useJobProgress } from '@/lib/jobs'
 
-/** Screen 6: answer a quiz. Objective answers are marked at once; written ones by the AI (an estimate). */
+/** Screen 6: a course or unit quiz on its own page, with earlier attempts. Topic checks run inside the study session. */
 export function QuizPage() {
   const { quizId = '' } = useParams()
   const quiz = useQuiz(quizId)
-  const submit = useSubmitAttempt(quizId)
   const navigate = useNavigate()
-  const progress = useJobProgress(quiz.data?.job_id ?? null, quiz.data?.status === 'generating', ['quiz', quizId])
 
   if (quiz.isPending) return <p className="text-muted-foreground">Loading…</p>
   if (quiz.error) return <p role="alert" className="text-destructive">{quiz.error.message}</p>
   const q = quiz.data
-  const total = q.questions.reduce((sum, x) => sum + x.marks, 0)
-  const written = q.questions.some((x) => !['mcq', 'true_false', 'fill_blank', 'numerical'].includes(x.type))
+  const topicId = q.settings.topic_ids.length === 1 ? q.settings.topic_ids[0] : null
 
   return (
     <div className="grid gap-8">
       <header className="grid gap-2">
-        <Link to={`/courses/${q.course_id}`} className="text-sm text-muted-foreground hover:underline">
-          ← Back to course
+        <Link to={topicId ? `/topics/${topicId}` : `/courses/${q.course_id}/practice`} className="text-sm text-muted-foreground hover:underline">
+          ← {topicId ? 'Back to the topic' : 'Back to practice'}
         </Link>
         <h1 className="text-2xl font-semibold">{q.title}</h1>
-        {q.status === 'ready' && (
-          <p className="text-sm text-muted-foreground">
-            {q.questions.length} questions · {total} marks
-            {written && ' · written answers are marked by the AI against a rubric: the score is an estimate'}
-          </p>
-        )}
-        {q.status === 'generating' && <JobProgress event={progress} label="Preparing the quiz" />}
-        {q.status === 'failed' && (
-          <p role="alert" className="text-sm text-destructive">
-            This quiz couldn't be prepared: {q.error}
-          </p>
-        )}
       </header>
 
       {q.attempts.length > 0 && (
@@ -64,6 +49,38 @@ export function QuizPage() {
         </section>
       )}
 
+      <QuizView quizId={quizId} onSubmitted={(a) => navigate(`/attempts/${a.id}`)} />
+    </div>
+  )
+}
+
+/** The quiz itself: preparing, then the questions and one submit. Objective answers are marked at once; written ones
+ * by the AI against a rubric (an estimate). */
+export function QuizView({ quizId, onSubmitted }: { quizId: string; onSubmitted: (attempt: AttemptSummary) => void }) {
+  const quiz = useQuiz(quizId)
+  const submit = useSubmitAttempt(quizId)
+  const progress = useJobProgress(quiz.data?.job_id ?? null, quiz.data?.status === 'generating', ['quiz', quizId])
+
+  if (quiz.isPending) return <p className="text-muted-foreground">Loading…</p>
+  if (quiz.error) return <p role="alert" className="text-destructive">{quiz.error.message}</p>
+  const q = quiz.data
+  const total = q.questions.reduce((sum, x) => sum + x.marks, 0)
+  const written = q.questions.some((x) => !OBJECTIVE.has(x.type))
+
+  return (
+    <div className="grid gap-8">
+      {q.status === 'ready' && (
+        <p className="text-sm text-muted-foreground">
+          {q.questions.length} questions · {total} marks
+          {written && ' · written answers are marked by the AI against a rubric: the score is an estimate'}
+        </p>
+      )}
+      {q.status === 'generating' && <JobProgress event={progress} label="Preparing the questions" />}
+      {q.status === 'failed' && (
+        <p role="alert" className="text-sm text-destructive">
+          These questions couldn't be prepared: {q.error}
+        </p>
+      )}
       {q.status === 'ready' && (
         <form
           className="grid gap-8"
@@ -71,7 +88,7 @@ export function QuizPage() {
             e.preventDefault()
             const data = new FormData(e.currentTarget)
             const answers = q.questions.map((x) => ({ question_id: x.id, answer: ((data.get(x.id) as string | null) ?? '').trim() }))
-            submit.mutate(answers, { onSuccess: (a) => navigate(`/attempts/${a.id}`) })
+            submit.mutate(answers, { onSuccess: onSubmitted })
           }}
         >
           <ol className="grid gap-8">
@@ -81,7 +98,7 @@ export function QuizPage() {
           </ol>
           {submit.error && <p role="alert" className="text-sm text-destructive">{submit.error.message}</p>}
           <div>
-            <Button type="submit" disabled={submit.isPending}>
+            <Button type="submit" pending={submit.isPending}>
               {submit.isPending ? 'Submitting…' : 'Submit answers'}
             </Button>
           </div>

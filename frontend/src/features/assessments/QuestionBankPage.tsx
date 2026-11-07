@@ -136,7 +136,8 @@ function PaperRow({ paper: p, courseId }: { paper: Paper; courseId: string }) {
             {p.drafts > 0 && ` · ${p.drafts} to review`}
           </p>
         </div>
-        <Button size="sm" variant="outline" disabled={busy || extract.isPending || p.document_status !== 'ready'} onClick={() => extract.mutate(p.document_id)}>
+        <Button size="sm" variant="outline" disabled={busy || extract.isPending || p.document_status !== 'ready'}
+                pending={extract.isPending && extract.variables === p.document_id} onClick={() => extract.mutate(p.document_id)}>
           {p.status === 'none' ? 'Extract questions' : 'Extract again'}
         </Button>
       </div>
@@ -209,7 +210,7 @@ function QuestionCard({ question: q }: { question: Question }) {
       )}
       <div className="flex flex-wrap gap-2">
         {q.status === 'draft' && (
-          <Button size="sm" disabled={update.isPending} onClick={() => update.mutate({ id: q.id, status: 'approved' })}>
+          <Button size="sm" disabled={update.isPending} pending={update.isPending && update.variables?.id === q.id} onClick={() => update.mutate({ id: q.id, status: 'approved' })}>
             Approve
           </Button>
         )}

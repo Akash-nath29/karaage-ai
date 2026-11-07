@@ -28,7 +28,8 @@ export function ResearchPanel({ topicId }: { topicId: string }) {
         </h2>
         <Button
           variant={r ? 'outline' : 'default'}
-          disabled={running || start.isPending}
+          disabled={running}
+          pending={start.isPending}
           onClick={() => start.mutate(!!r)}
         >
           {r ? 'Search again' : 'Research this topic'}

@@ -24,7 +24,7 @@ export function SearchPanel({ workspaceId, courseId }: { workspaceId: string; co
         }}
       >
         <Input name="query" aria-label="Search query" placeholder="e.g. which module covers deadlocks?" required />
-        <Button type="submit" disabled={search.isPending}>
+        <Button type="submit" pending={search.isPending}>
           {search.isPending ? 'Searching…' : 'Search'}
         </Button>
       </form>

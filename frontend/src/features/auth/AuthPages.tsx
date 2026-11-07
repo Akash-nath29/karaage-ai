@@ -4,7 +4,7 @@ import { Link, Navigate, useLocation, useNavigate, useParams, useSearchParams } 
 
 import { SimpleForm } from '@/components/simple-form'
 import { Button } from '@/components/ui/button'
-import { safeNext, switchAccount, useLogin, useMe, useRegister } from '@/features/auth/api'
+import { safeNext, switchAccount, useLogin, useMe, useRegister, type User } from '@/features/auth/api'
 import type { Workspace } from '@/features/workspaces/api'
 import { api, ApiError, refreshSession, send, SIGNED_OUT } from '@/lib/api'
 
@@ -161,7 +161,12 @@ export function VerifyEmailPage() {
   const qc = useQueryClient()
   const verify = useMutation({
     mutationFn: () => api<void>('/auth/verify-email', send('POST', { token: params.get('token') ?? '' })),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['me'] }),
+    onSuccess: () => {
+      // Drop the "confirm your email" banner now, not after the refetch's round trip; the refetch then confirms it.
+      // Not returned: the mutation (and its "Confirming…") would wait for that refetch too.
+      qc.setQueryData<User>(['me'], (u) => u && { ...u, email_verified: true })
+      void qc.invalidateQueries({ queryKey: ['me'] })
+    },
   })
   const sent = useRef(false)
   useEffect(() => {
@@ -210,7 +215,7 @@ export function InvitePage() {
       {me.data ? (
         <div className="grid gap-2">
           <p className="text-sm text-muted-foreground">Signed in as {me.data.email}.</p>
-          <Button onClick={() => accept.mutate()} disabled={accept.isPending}>
+          <Button onClick={() => accept.mutate()} pending={accept.isPending}>
             Join workspace
           </Button>
           {accept.error && <p role="alert" className="text-sm text-destructive">{accept.error.message}</p>}

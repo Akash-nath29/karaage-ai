@@ -78,7 +78,7 @@ export function TopicLessons({ topicId, workspaceId }: { topicId: string; worksp
             </NativeSelect>
           </div>
         )}
-        <Button type="submit" disabled={generate.isPending}>
+        <Button type="submit" pending={generate.isPending}>
           Generate lesson
         </Button>
         {!editor && <p className="w-full text-xs text-muted-foreground">Lessons you generate are private to you.</p>}
@@ -124,7 +124,7 @@ function LessonRow({ lesson: l, canShare }: { lesson: Lesson; canShare: boolean 
         <div className="flex items-center gap-2">
           {l.visibility === 'private' && <Badge variant="outline">Private</Badge>}
           {l.visibility === 'private' && canShare && l.current_version > 0 && (
-            <Button size="sm" variant="outline" disabled={publish.isPending} onClick={() => publish.mutate()}>
+            <Button size="sm" variant="outline" pending={publish.isPending} onClick={() => publish.mutate()}>
               Share with workspace
             </Button>
           )}
@@ -170,7 +170,7 @@ function Pins({ topicId, workspaceId }: { topicId: string; workspaceId: string }
           </label>
         ))}
         {candidates.length > 0 && (
-          <Button type="submit" size="sm" variant="outline" className="justify-self-start" disabled={save.isPending}>
+          <Button type="submit" size="sm" variant="outline" className="justify-self-start" pending={save.isPending}>
             Save pins
           </Button>
         )}

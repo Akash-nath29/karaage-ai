@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "side-tab",
+        "value": "*",
+        "files": [
+          "frontend/src/index.css"
+        ],
+        "createdAt": "2026-11-07T19:51:18.407Z",
+        "reason": "Claude triage: L140 is the markdown blockquote rule (.md blockquote: 2px neutral border-l, muted text), the standard typographic quote marker for LLM lesson text, not a coloured accent card; predates this session"
+      }
+    ]
+  }
+}

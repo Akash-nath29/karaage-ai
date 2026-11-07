@@ -3,18 +3,15 @@ import { Link, useNavigate } from 'react-router'
 
 import { ConfirmDelete } from '@/components/confirm-delete'
 import { NativeSelect } from '@/components/native-select'
-import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   percent,
-  PROGRESS_LABEL,
   TYPE_LABEL,
   useCourseQuizzes,
   useCreateQuiz,
   useDeleteQuiz,
-  useMarkStudied,
   useProgress,
   useQuestions,
   type Difficulty,
@@ -22,7 +19,6 @@ import {
   type QuizRequest,
 } from '@/features/assessments/api'
 import { useStructure } from '@/features/syllabus/api'
-import { useSessions } from '@/features/tutor/api'
 import { StartTutor } from '@/features/tutor/StartTutor'
 import { useRole } from '@/features/workspaces/api'
 import { atLeast } from '@/lib/api'
@@ -132,7 +128,7 @@ export function PracticePanel({ courseId, workspaceId }: { courseId: string; wor
           </fieldset>
           {create.error && <p role="alert" className="text-sm text-destructive">{create.error.message}</p>}
           <div>
-            <Button type="submit" disabled={create.isPending}>
+            <Button type="submit" pending={create.isPending}>
               Create quiz
             </Button>
           </div>
@@ -161,58 +157,6 @@ export function PracticePanel({ courseId, workspaceId }: { courseId: string; wor
             )
           })}
         </ul>
-      )}
-    </section>
-  )
-}
-
-/** Topic page: progress, a quick quiz, and the tutor (with earlier conversations about this topic). */
-export function TopicPractice({ topicId, courseId, workspaceId }: { topicId: string; courseId: string; workspaceId: string }) {
-  const progress = useProgress(courseId)
-  const mark = useMarkStudied()
-  const quiz = useCreateQuiz({ topicId })
-  const sessions = useSessions(workspaceId, { topic_id: topicId })
-  const navigate = useNavigate()
-  const t = progress.data?.topics.find((x) => x.topic_id === topicId)
-  const studied = !!t?.studied_at
-
-  return (
-    <section aria-labelledby="topic-practice-title" className="grid gap-3">
-      <div className="flex flex-wrap items-center gap-3">
-        <h2 id="topic-practice-title" className="text-lg font-medium">
-          Practice
-        </h2>
-        {t && <Badge variant={t.status === 'completed' ? 'default' : t.status === 'revision_required' ? 'destructive' : 'outline'}>{PROGRESS_LABEL[t.status]}</Badge>}
-        {t?.last_accuracy != null && <span className="text-sm text-muted-foreground">last quiz {percent(t.last_accuracy)}</span>}
-      </div>
-      <div className="flex flex-wrap gap-2">
-        <Button
-          variant="outline"
-          aria-pressed={studied}
-          disabled={mark.isPending || !t}
-          onClick={() => mark.mutate({ topicId, studied: !studied })}
-        >
-          {studied ? 'Studied ✓' : 'Mark as studied'}
-        </Button>
-        <Button disabled={quiz.isPending} onClick={() => quiz.mutate({ count: 5 }, { onSuccess: (q) => navigate(`/quizzes/${q.id}`) })}>
-          Quiz me (5 questions)
-        </Button>
-        <StartTutor context={{ workspace_id: workspaceId, topic_id: topicId }} />
-      </div>
-      {(quiz.error || mark.error) && <p role="alert" className="text-sm text-destructive">{(quiz.error ?? mark.error)?.message}</p>}
-      {sessions.data && sessions.data.length > 0 && (
-        <div className="grid gap-1 text-sm">
-          <h3 className="text-muted-foreground">Earlier conversations</h3>
-          <ul className="grid gap-0.5">
-            {sessions.data.slice(0, 5).map((s) => (
-              <li key={s.id}>
-                <Link to={`/tutor/${s.id}`} className="hover:underline">
-                  {s.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
       )}
     </section>
   )

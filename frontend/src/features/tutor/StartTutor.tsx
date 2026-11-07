@@ -9,7 +9,7 @@ export function StartTutor({ context, label = 'Ask the tutor' }: { context: Sess
   const navigate = useNavigate()
   return (
     <>
-      <Button variant="outline" disabled={create.isPending} onClick={() => create.mutate(context, { onSuccess: (s) => navigate(`/tutor/${s.id}`) })}>
+      <Button variant="outline" pending={create.isPending} onClick={() => create.mutate(context, { onSuccess: (s) => navigate(`/tutor/${s.id}`) })}>
         {label}
       </Button>
       {create.error && <p role="alert" className="text-sm text-destructive">{create.error.message}</p>}

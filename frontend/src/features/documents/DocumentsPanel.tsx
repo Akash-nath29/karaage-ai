@@ -23,6 +23,7 @@ import { useMe } from '@/features/auth/api'
 import { useRole } from '@/features/workspaces/api'
 import { atLeast } from '@/lib/api'
 import { useJobProgress } from '@/lib/jobs'
+import { cn } from '@/lib/utils'
 
 type Props = {
   workspaceId: string
@@ -57,7 +58,8 @@ export function DocumentsPanel({ workspaceId, courseId, courses }: Props) {
   )
 }
 
-function UploadForm({ workspaceId, courseId, courses }: Props) {
+/** `defaultKind` preselects the type (the setup checklist suggests Syllabus until the workspace has one). */
+export function UploadForm({ workspaceId, courseId, courses, defaultKind = 'notes', className }: Props & { defaultKind?: DocumentKind; className?: string }) {
   const id = useId()
   const upload = useUploadDocument(workspaceId)
   const [errors, setErrors] = useState<string[]>([])
@@ -65,7 +67,7 @@ function UploadForm({ workspaceId, courseId, courses }: Props) {
 
   return (
     <form
-      className="grid gap-3 rounded-xl border p-4"
+      className={cn('grid gap-3 rounded-xl border p-4', className)}
       onSubmit={async (e) => {
         e.preventDefault()
         const form = e.currentTarget
@@ -100,7 +102,7 @@ function UploadForm({ workspaceId, courseId, courses }: Props) {
       <div className="flex flex-wrap items-end gap-3">
         <div className="grid gap-1.5">
           <Label htmlFor={`${id}kind`}>Type</Label>
-          <NativeSelect id={`${id}kind`} name="kind" defaultValue="notes">
+          <NativeSelect id={`${id}kind`} name="kind" defaultValue={defaultKind}>
             {KINDS.map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
@@ -172,7 +174,8 @@ function DocumentRow({ document: d, courses, canManage }: { document: Document; 
             </NativeSelect>
           )}
           {canManage && (d.status === 'ready' || d.status === 'failed') && (
-            <Button variant="outline" onClick={() => reprocess.mutate(d.id)} disabled={reprocess.isPending}>
+            <Button variant="outline" onClick={() => reprocess.mutate(d.id)} disabled={reprocess.isPending}
+                    pending={reprocess.isPending && reprocess.variables === d.id}>
               Reprocess
             </Button>
           )}

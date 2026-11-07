@@ -8,13 +8,38 @@ import { useRegrade, useResults, type AnswerResult } from '@/features/assessment
 import { QuestionHeader } from '@/features/assessments/QuizPage'
 import { useJobProgress } from '@/lib/jobs'
 
-/** Evaluation and feedback for one attempt (Screen 6, Workflow 6). */
+/** Evaluation and feedback for one attempt of a course or unit quiz (Screen 6, Workflow 6). */
 export function ResultsPage() {
   const { attemptId = '' } = useParams()
   const results = useResults(attemptId)
+
+  if (results.isPending) return <p className="text-muted-foreground">Loading…</p>
+  if (results.error) return <p role="alert" className="text-destructive">{results.error.message}</p>
+  const r = results.data
+
+  return (
+    <div className="grid gap-8">
+      <header className="grid gap-2">
+        <Link to={`/quizzes/${r.quiz_id}`} className="text-sm text-muted-foreground hover:underline">
+          ← {r.quiz_title}
+        </Link>
+        <h1 className="text-2xl font-semibold">Results</h1>
+        <Link to={`/courses/${r.course_id}/progress`} className="text-sm underline-offset-2 hover:underline">
+          See your progress
+        </Link>
+      </header>
+      <ResultsView attemptId={attemptId} />
+    </div>
+  )
+}
+
+/** The score, then every answer with its marks, rubric, feedback and the reference answer. */
+export function ResultsView({ attemptId }: { attemptId: string }) {
+  const results = useResults(attemptId)
   const regrade = useRegrade(attemptId)
   const attempt = results.data?.attempt
-  const progress = useJobProgress(attempt?.job_id ?? null, attempt?.status === 'grading', ['attempt', attemptId])
+  // Marking moves the topic's progress and the quiz's score: refresh them too (the study session's next stop reads both).
+  const progress = useJobProgress(attempt?.job_id ?? null, attempt?.status === 'grading', ['attempt', attemptId], ['progress'], ['quizzes'])
 
   if (results.isPending) return <p className="text-muted-foreground">Loading…</p>
   if (results.error) return <p role="alert" className="text-destructive">{results.error.message}</p>
@@ -24,11 +49,7 @@ export function ResultsPage() {
 
   return (
     <div className="grid gap-8">
-      <header className="grid gap-3">
-        <Link to={`/quizzes/${r.quiz_id}`} className="text-sm text-muted-foreground hover:underline">
-          ← {r.quiz_title}
-        </Link>
-        <h1 className="text-2xl font-semibold">Results</h1>
+      <div className="grid gap-3">
         {a.status === 'graded' && (
           <div className="flex flex-wrap items-baseline gap-3">
             <p className="text-4xl font-semibold tabular-nums">
@@ -47,15 +68,12 @@ export function ResultsPage() {
         {a.status === 'failed' && (
           <div role="alert" className="flex flex-wrap items-center gap-3 text-sm text-destructive">
             <p>Marking failed: {a.error}</p>
-            <Button size="sm" variant="outline" disabled={regrade.isPending} onClick={() => regrade.mutate()}>
+            <Button size="sm" variant="outline" pending={regrade.isPending} onClick={() => regrade.mutate()}>
               Grade again
             </Button>
           </div>
         )}
-        <Link to={`/courses/${r.course_id}/progress`} className="text-sm underline-offset-2 hover:underline">
-          See your progress
-        </Link>
-      </header>
+      </div>
 
       <ol className="grid gap-8">
         {r.answers.map((x) => (

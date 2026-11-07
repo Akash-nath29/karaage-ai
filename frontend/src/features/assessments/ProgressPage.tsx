@@ -149,6 +149,7 @@ export function ProgressPage() {
                           aria-pressed={!!t.studied_at}
                           aria-label={`${t.studied_at ? 'Unmark' : 'Mark'} ${t.title} as studied`}
                           disabled={mark.isPending}
+                          pending={mark.isPending && mark.variables?.topicId === t.topic_id}
                           onClick={() => mark.mutate({ topicId: t.topic_id, studied: !t.studied_at })}
                         >
                           {t.studied_at ? 'Studied ✓' : 'Mark studied'}

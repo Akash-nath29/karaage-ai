@@ -157,7 +157,8 @@ export function TutorChat({
           <Label htmlFor={`${id}mode`} className="text-sm">
             Mode
           </Label>
-          <NativeSelect id={`${id}mode`} value={mode} onChange={(e) => setMode(e.target.value as Mode)}>
+          {/* max-w: a select is as wide as its longest option, which would overflow the tutor rail beside a lesson */}
+          <NativeSelect id={`${id}mode`} value={mode} onChange={(e) => setMode(e.target.value as Mode)} className="max-w-72">
             {MODES.map((m) => (
               <option key={m.value} value={m.value}>
                 {m.label}: {m.hint}

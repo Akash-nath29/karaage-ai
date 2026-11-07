@@ -16,7 +16,8 @@ export type User = {
 export type Person = Pick<User, 'id' | 'email' | 'display_name' | 'avatar_url'>
 
 export const useMe = () =>
-  useQuery({ queryKey: ['me'], queryFn: () => api<User>('/users/me'), retry: false, staleTime: 60_000 })
+  // 'always': coming back to a tab re-checks even fresh data, e.g. after confirming the email in another tab.
+  useQuery({ queryKey: ['me'], queryFn: () => api<User>('/users/me'), retry: false, staleTime: 60_000, refetchOnWindowFocus: 'always' })
 
 /** After signing in, out or as someone else: drop the previous account's cached data, and update "me" in place.
  * (Not queryClient.clear(): components already showing "me" wouldn't hear about the change.) */

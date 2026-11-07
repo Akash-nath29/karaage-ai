@@ -63,7 +63,7 @@ export function SimpleForm({ fields, initial = {}, submitLabel, pending, error, 
         </p>
       )}
       <div className="flex gap-2">
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" pending={pending}>
           {submitLabel}
         </Button>
         {onCancel && (

@@ -10,6 +10,8 @@ Docker Desktop (running), Python 3.11+, Node 22+, [uv](https://docs.astral.sh/uv
 
 ## Run
 
+**Windows shortcut:** after the one-time setup below (`.env`, `.venv`, `npm install`), `script.bat` runs steps 1–3, each server in its own window. It refuses to start while `.env` points at a remote database.
+
 ```sh
 cp .env.example .env               # then set GEMINI_API_KEY, TAVILY_API_KEY and SECRET_KEY (see the comment there)
 

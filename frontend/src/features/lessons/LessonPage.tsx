@@ -1,5 +1,5 @@
-import { useId, useState } from 'react'
-import { Link, useParams, useSearchParams } from 'react-router'
+import { useId, useState, type ReactNode } from 'react'
+import { Navigate, useParams, useSearchParams } from 'react-router'
 
 import { JobProgress } from '@/components/job-progress'
 import { CitationLink, LessonBlock } from '@/components/lesson-blocks/blocks'
@@ -19,15 +19,25 @@ import {
   type Citation,
   type LessonDetail,
 } from '@/features/lessons/api'
-import { TutorPanel } from '@/features/tutor/TutorPage'
 import { useRole } from '@/features/workspaces/api'
 import { atLeast } from '@/lib/api'
 import { useJobProgress } from '@/lib/jobs'
 
+/** Lesson links (emails, bookmarks, the dashboard) open the lesson inside its topic's study session (D38). */
 export function LessonPage() {
   const { lessonId = '' } = useParams()
-  const [params, setParams] = useSearchParams()
-  const version = Number(params.get('version')) || undefined
+  const [params] = useSearchParams()
+  const version = params.get('version')
+  const detail = useLesson(lessonId, Number(version) || undefined)
+  if (detail.isPending) return <p className="text-muted-foreground">Loading…</p>
+  if (detail.error) return <p role="alert" className="text-destructive">{detail.error.message}</p>
+  const query = new URLSearchParams({ lesson: lessonId, ...(version ? { version } : {}) })
+  return <Navigate replace to={`/topics/${detail.data.lesson.topic_id}?${query}`} />
+}
+
+/** A lesson to read: objectives, sections, sources, then ways to change it. `onVersion(undefined)` means the latest.
+ * `children` goes where the reading ends, before the sources (the study session's "Check yourself"). */
+export function LessonView({ lessonId, version, onVersion, children }: { lessonId: string; version?: number; onVersion: (version: number | undefined) => void; children?: ReactNode }) {
   const detail = useLesson(lessonId, version)
   const lesson = detail.data?.lesson
   const progress = useJobProgress(lesson?.job_id ?? null, !!lesson && isBusy(lesson), ['lesson', lessonId])
@@ -46,17 +56,8 @@ export function LessonPage() {
   return (
     <article className="grid gap-10">
       <header className="grid gap-4">
-        <nav aria-label="Breadcrumb" className="text-sm text-muted-foreground">
-          <Link to={`/courses/${d.course_id}`} className="hover:underline">
-            {d.course_title}
-          </Link>{' '}
-          › {d.unit_title} ›{' '}
-          <Link to={`/topics/${d.lesson.topic_id}`} className="hover:underline">
-            {d.topic_title}
-          </Link>
-        </nav>
         <div className="grid gap-1">
-          <h1 className="text-3xl font-semibold tracking-tight">{doc.title}</h1>
+          {doc.title !== d.topic_title && <h2 className="text-xl font-semibold tracking-tight text-balance">{doc.title}</h2>}
           <p className="text-sm text-muted-foreground">
             {depthLabel(doc.depth)} · about {doc.estimated_minutes} min · version {d.version.version}
             {!latest && ` of ${d.lesson.current_version}`}
@@ -67,7 +68,7 @@ export function LessonPage() {
         {!latest && (
           <p className="rounded-xl border border-dashed px-4 py-2 text-sm">
             You're reading an older version.{' '}
-            <button type="button" className="font-medium underline" onClick={() => setParams({})}>
+            <button type="button" className="font-medium underline" onClick={() => onVersion(undefined)}>
               Go to the latest
             </button>
           </p>
@@ -120,10 +121,9 @@ export function LessonPage() {
         </section>
       ))}
 
+      {children}
       <Sources citations={d.citations} />
-      <TutorPanel context={{ lesson_id: d.lesson.id }} />
-      <LessonActions detail={d} canChange={canChange}
-                     onVersion={(v) => setParams(v === d.lesson.current_version ? {} : { version: String(v) })} />
+      <LessonActions detail={d} canChange={canChange} onVersion={(v) => onVersion(v === d.lesson.current_version ? undefined : v)} />
     </article>
   )
 }
@@ -132,7 +132,7 @@ function ShareButton({ lessonId }: { lessonId: string }) {
   const publish = usePublish(lessonId)
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <Button size="sm" variant="outline" className="justify-self-start" disabled={publish.isPending} onClick={() => publish.mutate()}>
+      <Button size="sm" variant="outline" className="justify-self-start" pending={publish.isPending} onClick={() => publish.mutate()}>
         Share with workspace
       </Button>
       {publish.error && <p role="alert" className="text-sm text-destructive">{publish.error.message}</p>}
@@ -143,10 +143,10 @@ function ShareButton({ lessonId }: { lessonId: string }) {
 function OutdatedNotice({ lessonId, reason, busy, canChange }: { lessonId: string; reason: string; busy: boolean; canChange: boolean }) {
   const regenerate = useRegenerate(lessonId)
   return (
-    <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border-l-4 border-amber-600/50 bg-amber-50 px-4 py-3 text-sm dark:bg-amber-950/40">
+    <div role="status" className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-600/40 bg-amber-50 px-4 py-3 text-sm dark:bg-amber-950/40">
       <p>This lesson may be out of date. {reason}</p>
       {canChange && (
-        <Button size="sm" variant="outline" disabled={busy || regenerate.isPending} onClick={() => regenerate.mutate()}>
+        <Button size="sm" variant="outline" disabled={busy} pending={regenerate.isPending} onClick={() => regenerate.mutate()}>
           Regenerate
         </Button>
       )}
@@ -200,8 +200,7 @@ function LessonActions({ detail: d, canChange, onVersion }: { detail: LessonDeta
       {!canChange && (
         <p className="text-sm text-muted-foreground">
           This lesson is shared by your workspace. Want it another way?{' '}
-          <Link to={`/topics/${d.lesson.topic_id}`} className="underline">Generate your own private version</Link>, or ask
-          the tutor above.
+          <a href="#more-lessons" className="underline">Generate your own private version</a>, or ask the tutor.
         </p>
       )}
       {canChange && <form
@@ -287,7 +286,7 @@ function Feedback({ lessonId }: { lessonId: string }) {
       {rating && (
         <div className="flex gap-2">
           <Input name="comment" aria-label="What could be better? (optional)" placeholder="What could be better? (optional)" maxLength={2000} id={`${id}c`} />
-          <Button type="submit" size="sm" disabled={feedback.isPending}>
+          <Button type="submit" size="sm" pending={feedback.isPending}>
             Send
           </Button>
         </div>

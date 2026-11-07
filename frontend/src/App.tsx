@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { lazy, Suspense, type ReactNode } from 'react'
-import { BrowserRouter, Link, Outlet, Route, Routes, useNavigate } from 'react-router'
+import { BrowserRouter, Link, Outlet, Route, Routes, useMatch, useNavigate } from 'react-router'
 
 import { Avatar } from '@/components/avatar'
 import { Button } from '@/components/ui/button'
@@ -18,12 +18,12 @@ import {
 } from '@/features/auth/AuthPages'
 import { CoursePage } from '@/features/courses/CoursePage'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
-import { TopicPage } from '@/features/syllabus/TopicPage'
 import { WorkspacePage } from '@/features/workspaces/WorkspacePage'
 import { shouldRetry } from '@/lib/api'
 
 // Pages that render markdown pull in KaTeX and the markdown pipeline (Mermaid loads later, per diagram): on demand.
 const LessonPage = lazy(() => import('@/features/lessons/LessonPage').then((m) => ({ default: m.LessonPage })))
+const StudySession = lazy(() => import('@/features/study/StudySession').then((m) => ({ default: m.StudySession })))
 const TutorPage = lazy(() => import('@/features/tutor/TutorPage').then((m) => ({ default: m.TutorPage })))
 const QuizPage = lazy(() => import('@/features/assessments/QuizPage').then((m) => ({ default: m.QuizPage })))
 const ResultsPage = lazy(() => import('@/features/assessments/ResultsPage').then((m) => ({ default: m.ResultsPage })))
@@ -43,7 +43,7 @@ function AccountMenu() {
         <Avatar person={me.data} />
         <span className="hidden sm:inline">{me.data.display_name}</span>
       </Link>
-      <Button variant="ghost" size="sm" disabled={logout.isPending}
+      <Button variant="ghost" size="sm" pending={logout.isPending}
               onClick={() => logout.mutate(undefined, { onSettled: () => navigate('/login') })}>
         Sign out
       </Button>
@@ -62,8 +62,9 @@ function VerifyBanner() {
         {resend.isSuccess ? (
           <span className="text-muted-foreground">Sent again.</span>
         ) : (
-          <button className="underline" onClick={() => resend.mutate()} disabled={resend.isPending}>
-            Send it again
+          <button className="underline disabled:text-muted-foreground disabled:no-underline" onClick={() => resend.mutate()}
+                  disabled={resend.isPending}>
+            {resend.isPending ? 'Sending…' : 'Send it again'}
           </button>
         )}
         {resend.error && <span role="alert" className="text-destructive">{resend.error.message}</span>}
@@ -73,10 +74,12 @@ function VerifyBanner() {
 }
 
 function Shell() {
+  // A study session has the tutor beside the lesson (D38): it gets the wider page.
+  const width = useMatch('/topics/:topicId/*') ? 'max-w-6xl' : 'max-w-4xl'
   return (
     <>
       <header className="border-b">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-3">
+        <div className={`mx-auto flex ${width} items-center justify-between px-6 py-3`}>
           <Link to="/" className="font-semibold">
             Karaage
           </Link>
@@ -84,7 +87,7 @@ function Shell() {
         </div>
       </header>
       <VerifyBanner />
-      <main className="mx-auto max-w-4xl px-6 py-8">
+      <main className={`mx-auto ${width} px-6 py-8`}>
         <Outlet />
       </main>
     </>
@@ -106,9 +109,9 @@ export default function App() {
             <Route element={<RequireAuth><Outlet /></RequireAuth>}>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/profile" element={<ProfilePage />} />
-              <Route path="/workspaces/:workspaceId" element={<WorkspacePage />} />
-              <Route path="/courses/:courseId" element={<CoursePage />} />
-              <Route path="/topics/:topicId" element={<TopicPage />} />
+              <Route path="/workspaces/:workspaceId/*" element={<WorkspacePage />} />
+              <Route path="/courses/:courseId/*" element={<CoursePage />} />
+              <Route path="/topics/:topicId/*" element={later(<StudySession />)} />
               <Route path="/lessons/:lessonId" element={later(<LessonPage />)} />
               <Route path="/tutor/:sessionId" element={later(<TutorPage />)} />
               <Route path="/quizzes/:quizId" element={later(<QuizPage />)} />
