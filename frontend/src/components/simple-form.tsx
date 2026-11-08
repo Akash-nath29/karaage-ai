@@ -1,4 +1,5 @@
-import { useId } from 'react'
+import { Eye, EyeOff } from 'lucide-react'
+import { useId, useState, type ComponentProps } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -50,6 +51,8 @@ export function SimpleForm({ fields, initial = {}, submitLabel, pending, error, 
             <Label htmlFor={props.id}>{f.label}</Label>
             {f.multiline ? (
               <Textarea {...props} />
+            ) : f.type === 'password' ? (
+              <PasswordInput {...props} autoComplete={f.autoComplete} minLength={f.minLength} />
             ) : (
               <Input {...props} type={f.type} autoComplete={f.autoComplete} minLength={f.minLength} />
             )}
@@ -73,5 +76,19 @@ export function SimpleForm({ fields, initial = {}, submitLabel, pending, error, 
         )}
       </div>
     </form>
+  )
+}
+
+/** A password box with an eye button that shows what was typed. Edge's own reveal icon is hidden so there's one eye. */
+function PasswordInput(props: ComponentProps<'input'>) {
+  const [shown, setShown] = useState(false)
+  return (
+    <div className="relative">
+      <Input {...props} type={shown ? 'text' : 'password'} className="pr-9 [&::-ms-reveal]:hidden" />
+      <Button type="button" variant="ghost" size="icon-sm" className="absolute top-0.5 right-0.5 text-muted-foreground"
+              aria-label={shown ? 'Hide password' : 'Show password'} aria-controls={props.id} onClick={() => setShown(!shown)}>
+        {shown ? <EyeOff /> : <Eye />}
+      </Button>
+    </div>
   )
 }
